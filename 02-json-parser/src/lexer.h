@@ -31,6 +31,7 @@ typedef struct {
 
 JsonTokenizer	*jlx_tokenizer_create(char *buffer, size_t buffer_size);
 void			jlx_tokenizer_destroy(JsonTokenizer *tokenizer);
+bool			jlx_tokenizer_process(JsonTokenizer *tokenizer);
 bool			jlx_next_token(JsonTokenizer *tokenizer);
 
 void			jlx_token_print(JsonToken token);

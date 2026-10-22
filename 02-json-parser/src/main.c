@@ -9,18 +9,30 @@
 
 int main(void)
 {
-	char *buff = "";
-	printf("Buff = %s\n", buff);
-	
+	bool ok = false;
+	char *buff = "{}      f ";
 	JsonTokenizer *tokenizer = jlx_tokenizer_create(buff, strlen(buff));
+
+	printf("-------- Buffer --------\n");
+	printf("Buffer = %s\n", buff);
+	printf("Length = %d\n", (int) strlen(buff));
+
+	ok = jlx_tokenizer_process(tokenizer);
+	if(!ok) {
+		goto cleanup;
+	}
+
+	printf("-------- Tokens --------\n");
 	for(int i = 0; i < arrlen(tokenizer->tokens); i++) {
 		jlx_token_print(tokenizer->tokens[i]);
 		printf("\n");
 	}
+	printf("-------- ------ --------\n");
 
 	JsonParser parser = jsp_parser_create(tokenizer->tokens, arrlen(tokenizer->tokens));
-	bool ok = jsp_parse(&parser);
+	ok = jsp_parse(&parser);
 
+cleanup:
 	jlx_tokenizer_destroy(tokenizer);
 
 	if(ok) {

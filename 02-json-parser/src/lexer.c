@@ -21,13 +21,6 @@ JsonTokenizer	*jlx_tokenizer_create(char *buffer, size_t buffer_size)
 	tokenizer->line	= 1;
 	tokenizer->col	= 1;
 
-	while(tokenizer->cursor < tokenizer->buffer_size) {
-		bool ok = jlx_next_token(tokenizer);
-		if(!ok) {
-			printf("Stopping the tokenizer\n");
-			break;
-		}
-	}
 
 	return tokenizer;
 }
@@ -36,6 +29,19 @@ void			jlx_tokenizer_destroy(JsonTokenizer *tokenizer)
 {
 	arrfree(tokenizer->tokens);
 	free(tokenizer);
+}
+
+bool			jlx_tokenizer_process(JsonTokenizer *tokenizer)
+{
+	while(tokenizer->cursor < tokenizer->buffer_size) {
+		bool ok = jlx_next_token(tokenizer);
+		if(!ok) {
+			fprintf(stderr, "Stopping the tokenizer\n");
+			return false;
+		}
+	}
+	arrput(tokenizer->tokens, generate_token(tokenizer, Token_EOF, 0));
+	return 1;
 }
 
 bool			jlx_next_token(JsonTokenizer *tokenizer)
@@ -56,11 +62,8 @@ bool			jlx_next_token(JsonTokenizer *tokenizer)
 			arrput(tokenizer->tokens, generate_token(tokenizer, Token_CurlyBraketClose, 1));
 			break;
 		default:
-			fprintf(stderr, "Could not process token at %u:%u\n", tokenizer->line, tokenizer->col);
+			fprintf(stderr, "Unexpected input at %u:%u\n", tokenizer->line, tokenizer->col);
 			return 0;
-	}
-	if(tokenizer->cursor == tokenizer->buffer_size) {
-		arrput(tokenizer->tokens, generate_token(tokenizer, Token_EOF, 0));
 	}
 	return 1;
 }
@@ -101,4 +104,5 @@ static const char *get_token_kind_name(JsonTokenKind kind)
 		case Token_EOF:
 			return "EOF";
 	}
+	return "UNKNOWN";
 }
