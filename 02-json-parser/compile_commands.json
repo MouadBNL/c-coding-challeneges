@@ -1,0 +1,59 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iincludes",
+      "-g",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address",
+      "-c",
+      "-o",
+      "obj/lexer.o",
+      "src/lexer.c"
+    ],
+    "directory": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser",
+    "file": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/src/lexer.c",
+    "output": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/obj/lexer.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iincludes",
+      "-g",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address",
+      "-c",
+      "-o",
+      "obj/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser",
+    "file": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/src/main.c",
+    "output": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iincludes",
+      "-g",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address",
+      "-c",
+      "-o",
+      "obj/parser.o",
+      "src/parser.c"
+    ],
+    "directory": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser",
+    "file": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/src/parser.c",
+    "output": "/home/mouadbnl/Projects/c-coding-challenges/02-json-parser/obj/parser.o"
+  }
+]
