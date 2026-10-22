@@ -41,6 +41,22 @@ bool		jsp_parse_object(JsonParser *parser)
 		return false;
 	}
 
+	if(peek(parser).kind != Token_CurlyBraketClose) {
+		do {
+			if(!consume_token(parser, Token_String)) {
+				return false;
+			}
+
+			if(!consume_token(parser, Token_Colon)) {
+				return false;
+			}
+
+			if(!consume_token(parser, Token_String)) {
+				return false;
+			}
+		} while(consume_token(parser, Token_Comma));
+	}
+
 	if(!consume_token(parser, Token_CurlyBraketClose)) {
 		return false;
 	}

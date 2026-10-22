@@ -16,5 +16,6 @@ bool	jsp_parse(JsonParser *parser);
 bool	jsp_parse_value(JsonParser *parser);
 
 bool	jsp_parse_object(JsonParser *parser);
+bool	jsp_parse_string(JsonParser *parser);
 
 #endif

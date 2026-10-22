@@ -8,6 +8,9 @@
 typedef enum  {
 	Token_CurlyBraketOpen,
 	Token_CurlyBraketClose,
+	Token_String,
+	Token_Colon,
+	Token_Comma,
 	Token_EOF
 } JsonTokenKind;
 

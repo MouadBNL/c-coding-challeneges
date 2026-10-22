@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <wctype.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -9,6 +10,7 @@
 
 // -------- Helper function [Declaration] --------
 static JsonToken generate_token(JsonTokenizer *tokenizer, JsonTokenKind kind, size_t value_size);
+static JsonToken generate_string_token(JsonTokenizer *tokenizer);
 static const char *get_token_kind_name(JsonTokenKind kind);
 
 JsonTokenizer	*jlx_tokenizer_create(char *buffer, size_t buffer_size)
@@ -34,6 +36,7 @@ void			jlx_tokenizer_destroy(JsonTokenizer *tokenizer)
 bool			jlx_tokenizer_process(JsonTokenizer *tokenizer)
 {
 	while(tokenizer->cursor < tokenizer->buffer_size) {
+		if(tokenizer->buffer[tokenizer->cursor] == '\0') break;
 		bool ok = jlx_next_token(tokenizer);
 		if(!ok) {
 			fprintf(stderr, "Stopping the tokenizer\n");
@@ -54,6 +57,7 @@ bool			jlx_next_token(JsonTokenizer *tokenizer)
 			tokenizer->col=1;
 		}
 	}
+	if(tokenizer->buffer[tokenizer->cursor] == '\0') return 1;
 	switch (tokenizer->buffer[tokenizer->cursor]) {
 		case '{':	
 			arrput(tokenizer->tokens, generate_token(tokenizer, Token_CurlyBraketOpen, 1));
@@ -61,8 +65,20 @@ bool			jlx_next_token(JsonTokenizer *tokenizer)
 		case '}':
 			arrput(tokenizer->tokens, generate_token(tokenizer, Token_CurlyBraketClose, 1));
 			break;
+		case ':':
+			arrput(tokenizer->tokens, generate_token(tokenizer, Token_Colon, 1));
+			break;
+		case ',':
+			arrput(tokenizer->tokens, generate_token(tokenizer, Token_Comma, 1));
+			break;
+		case '"':
+			arrput(tokenizer->tokens, generate_string_token(tokenizer));
+			break;
 		default:
-			fprintf(stderr, "Unexpected input at %u:%u\n", tokenizer->line, tokenizer->col);
+			{
+				char tk = tokenizer->buffer[tokenizer->cursor];
+				fprintf(stderr, "Unexpected input at %u:%u '%c' / %d\n", tokenizer->line, tokenizer->col, tk, (int) tk);
+			}
 			return 0;
 	}
 	return 1;
@@ -81,7 +97,7 @@ static JsonToken generate_token(JsonTokenizer *tokenizer, JsonTokenKind kind, si
 {
 	JsonToken token = {
 		.kind = kind,
-		.value_content = tokenizer->buffer,
+		.value_content = tokenizer->buffer + tokenizer->cursor,
 		.value_size = value_size,
 		.col = tokenizer->col,
 		.line = tokenizer->line,
@@ -93,6 +109,30 @@ static JsonToken generate_token(JsonTokenizer *tokenizer, JsonTokenKind kind, si
 	return token;
 }
 
+static JsonToken generate_string_token(JsonTokenizer *tokenizer)
+{
+	JsonToken token = {
+		.kind = Token_String,
+		.value_content = tokenizer->buffer + tokenizer->cursor,
+		.value_size = 1,
+		.col = tokenizer->col,
+		.line = tokenizer->line,
+	};
+
+	tokenizer->cursor++;
+	tokenizer->col++;
+
+	while(tokenizer->buffer[tokenizer->cursor] != '"' && tokenizer->cursor < tokenizer->buffer_size) {
+		token.value_size++;
+		tokenizer->cursor++;
+		tokenizer->col++;
+	}
+	token.value_size++;
+	tokenizer->cursor++;
+	tokenizer->col++;
+
+	return token;
+}
 
 static const char *get_token_kind_name(JsonTokenKind kind)
 {
@@ -101,6 +141,12 @@ static const char *get_token_kind_name(JsonTokenKind kind)
 			return "{";
 		case Token_CurlyBraketClose:
 			return "}";
+		case Token_Colon:
+			return ":";
+		case Token_Comma:
+			return ",";
+		case Token_String:
+			return "String";
 		case Token_EOF:
 			return "EOF";
 	}
