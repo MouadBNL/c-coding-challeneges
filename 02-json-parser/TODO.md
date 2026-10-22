@@ -1,3 +1,3 @@
-- [ ] Handle empty buffers
-- [ ] Read a path from args and open that file 
+- [x] Handle empty buffers
+- [x] Read a path from args and open that file 
 
