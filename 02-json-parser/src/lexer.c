@@ -149,6 +149,11 @@ static JsonToken generate_string_token(JsonTokenizer *tokenizer)
 	tokenizer->col++;
 
 	while(tokenizer->buffer[tokenizer->cursor] != '"' && tokenizer->cursor < tokenizer->buffer_size) {
+		if(tokenizer->buffer[tokenizer->cursor] == '\\') {
+			token.value_size++;
+			tokenizer->cursor++;
+			tokenizer->col++;
+		}
 		token.value_size++;
 		tokenizer->cursor++;
 		tokenizer->col++;
