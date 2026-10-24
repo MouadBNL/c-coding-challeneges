@@ -172,6 +172,7 @@ static JsonToken generate_number_token(JsonTokenizer *tokenizer)
 
 	char tk = tokenizer->buffer[tokenizer->cursor];
 	bool found_floating_point = false;
+	bool found_exponent = false;
 
 	do {
 		if(tk == '.') {
@@ -182,6 +183,19 @@ static JsonToken generate_number_token(JsonTokenizer *tokenizer)
 		tokenizer->col++;
 		token.value_size++;
 		tk = tokenizer->buffer[tokenizer->cursor];
+		if((tk == 'e' || tk == 'E') && !found_exponent) {
+			found_exponent = true;
+			tokenizer->cursor++;
+			tokenizer->col++;
+			token.value_size++;
+			tk = tokenizer->buffer[tokenizer->cursor];
+			if(tk == '+' || tk == '-') {
+				tokenizer->cursor++;
+				tokenizer->col++;
+				token.value_size++;
+				tk = tokenizer->buffer[tokenizer->cursor];
+			}
+		}
 	} while(isdigit(tk) || tk == '.');
 
 	return token;
