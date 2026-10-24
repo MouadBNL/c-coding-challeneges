@@ -40,8 +40,8 @@ bool			jlx_tokenizer_process(JsonTokenizer *tokenizer)
 {
 	size_t cursor = tokenizer->cursor;
 	while(tokenizer->cursor < tokenizer->buffer_size) {
-		printf("Processing token %c at %zu - %u:%u\n", tokenizer->buffer[tokenizer->cursor], tokenizer->cursor, tokenizer->line, tokenizer->col);
-
+		// printf("Processing token %c at %zu - %u:%u\n", tokenizer->buffer[tokenizer->cursor], tokenizer->cursor, tokenizer->line, tokenizer->col);
+		
 		cursor = tokenizer->cursor;
 		if(tokenizer->buffer[tokenizer->cursor] == '\0') break;
 		bool ok = jlx_next_token(tokenizer);
@@ -97,7 +97,7 @@ bool			jlx_next_token(JsonTokenizer *tokenizer)
 
 	char tk = tokenizer->buffer[tokenizer->cursor];
 
-	if(isdigit(tk) || tk == '.') {
+	if(isdigit(tk) || tk == '.' || tk == '-') {
 		arrput(tokenizer->tokens, generate_number_token(tokenizer));
 		return 1;
 	}
