@@ -9,8 +9,12 @@ typedef enum  {
 	Token_CurlyBraketOpen,
 	Token_CurlyBraketClose,
 	Token_String,
+	Token_Number,
 	Token_Colon,
 	Token_Comma,
+	Token_False,
+	Token_True,
+	Token_Null,
 	Token_EOF
 } JsonTokenKind;
 
@@ -38,5 +42,12 @@ bool			jlx_tokenizer_process(JsonTokenizer *tokenizer);
 bool			jlx_next_token(JsonTokenizer *tokenizer);
 
 void			jlx_token_print(JsonToken token);
+
+
+static const struct { const char *key; JsonTokenKind kind; } json_keywords_table[] = {
+	{ "false"	, Token_False	},
+	{ "true"	, Token_True	},
+	{ "null"	, Token_Null	},
+};
 
 #endif
