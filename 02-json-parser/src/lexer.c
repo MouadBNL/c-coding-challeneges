@@ -38,12 +38,22 @@ void			jlx_tokenizer_destroy(JsonTokenizer *tokenizer)
 
 bool			jlx_tokenizer_process(JsonTokenizer *tokenizer)
 {
+	size_t cursor = tokenizer->cursor;
 	while(tokenizer->cursor < tokenizer->buffer_size) {
+		printf("Processing token %c at %zu - %u:%u\n", tokenizer->buffer[tokenizer->cursor], tokenizer->cursor, tokenizer->line, tokenizer->col);
+
+		cursor = tokenizer->cursor;
 		if(tokenizer->buffer[tokenizer->cursor] == '\0') break;
 		bool ok = jlx_next_token(tokenizer);
 		if(!ok) {
 			fprintf(stderr, "Stopping the tokenizer\n");
 			return false;
+		}
+
+
+		if(cursor == tokenizer->cursor) {
+			fprintf(stderr, "Cursor did not move, infinit loop detected.");
+			return 0;
 		}
 	}
 	arrput(tokenizer->tokens, generate_token(tokenizer, Token_EOF, 0));
@@ -216,7 +226,7 @@ static bool		generate_keyword(JsonTokenizer *tokenizer)
 		len++;
 	}
 	for(size_t i = 0; i < sizeof json_keywords_table / sizeof *json_keywords_table; i++) {
-		if(strncmp(buff, json_keywords_table[i].key, len) == 0) {
+		if(len > 0 && strncmp(buff, json_keywords_table[i].key, len) == 0) {
 			arrput(tokenizer->tokens, generate_token(tokenizer, json_keywords_table[i].kind, len));
 			return 1;
 		}
