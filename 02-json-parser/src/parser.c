@@ -31,6 +31,8 @@ bool		jsp_parse_value(JsonParser *parser)
 	switch (peek(parser).kind) {
 		case Token_CurlyBraketOpen:
 			return jsp_parse_object(parser);
+		case Token_SquareBraketOpen:
+			return jsp_parse_array(parser);
 		case Token_String:
 		case Token_Number:
 		case Token_False:
@@ -69,6 +71,27 @@ bool		jsp_parse_object(JsonParser *parser)
 	}
 
 	if(!consume_token(parser, Token_CurlyBraketClose)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool		jsp_parse_array(JsonParser *parser)
+{
+	if(!consume_token(parser, Token_SquareBraketOpen)) {
+		return false;
+	}
+
+	if(peek(parser).kind != Token_SquareBraketClose) {
+		do {
+			if(!jsp_parse_value(parser)) {
+				return false;
+			}
+		} while(consume_token(parser, Token_Comma));
+	}
+
+	if(!consume_token(parser, Token_SquareBraketClose)) {
 		return false;
 	}
 

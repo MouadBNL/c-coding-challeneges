@@ -8,6 +8,8 @@
 typedef enum  {
 	Token_CurlyBraketOpen,
 	Token_CurlyBraketClose,
+	Token_SquareBraketOpen,
+	Token_SquareBraketClose,
 	Token_String,
 	Token_Number,
 	Token_Colon,

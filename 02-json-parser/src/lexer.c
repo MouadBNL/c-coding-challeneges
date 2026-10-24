@@ -68,6 +68,12 @@ bool			jlx_next_token(JsonTokenizer *tokenizer)
 		case '}':
 			arrput(tokenizer->tokens, generate_token(tokenizer, Token_CurlyBraketClose, 1));
 			return 1;
+		case '[':
+			arrput(tokenizer->tokens, generate_token(tokenizer, Token_SquareBraketOpen, 1));
+			return 1;
+		case ']':
+			arrput(tokenizer->tokens, generate_token(tokenizer, Token_SquareBraketClose, 1));
+			return 1;
 		case ':':
 			arrput(tokenizer->tokens, generate_token(tokenizer, Token_Colon, 1));
 			return 1;
@@ -154,11 +160,10 @@ static JsonToken generate_number_token(JsonTokenizer *tokenizer)
 		.line = tokenizer->line,
 	};
 
-	char tk;
+	char tk = tokenizer->buffer[tokenizer->cursor];
 	bool found_floating_point = false;
 
 	do {
-		tk = tokenizer->buffer[tokenizer->cursor];
 		if(tk == '.') {
 			if(found_floating_point) break;
 			else found_floating_point = true;
@@ -166,6 +171,7 @@ static JsonToken generate_number_token(JsonTokenizer *tokenizer)
 		tokenizer->cursor++;
 		tokenizer->col++;
 		token.value_size++;
+		tk = tokenizer->buffer[tokenizer->cursor];
 	} while(isdigit(tk) || tk == '.');
 
 	return token;
@@ -178,6 +184,10 @@ static const char *get_token_kind_name(JsonTokenKind kind)
 			return "{";
 		case Token_CurlyBraketClose:
 			return "}";
+		case Token_SquareBraketOpen:
+			return "[";
+		case Token_SquareBraketClose:
+			return "]";
 		case Token_Colon:
 			return ":";
 		case Token_Comma:
